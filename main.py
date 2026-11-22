@@ -57,6 +57,25 @@ def png_dimensions(path):
     return width, height
 
 
+def output_dimensions(path):
+    """Return (width, height) for the output, sniffing the file's
+    actual magic bytes instead of trusting its extension.
+
+    The no-Pillow fallback writes JPEG bytes to a file named
+    entry.png, so deciding the decoder from the filename misreads
+    it and fails the run. PNG signature -> PNG, JPEG SOI -> JPEG.
+    """
+    with open(path, "rb") as fh:
+        magic = fh.read(8)
+    if magic == b"\x89PNG\r\n\x1a\n":
+        return png_dimensions(path)
+    if magic[:2] == b"\xff\xd8":
+        return jpeg_dimensions(path)
+    raise ValueError(
+        f"output is neither PNG nor JPEG (magic bytes {magic!r}): {path}"
+    )
+
+
 def build_entry():
     if not os.path.isfile(SOURCE):
         raise FileNotFoundError(f"source image missing: {SOURCE}")
@@ -113,10 +132,10 @@ def build_entry():
             f"output is {size} bytes, over the {MAX_BYTES} byte limit"
         )
 
-    if OUTPUT.endswith(".png"):
-        width, height = png_dimensions(OUTPUT)
-    else:  # pragma: no cover - only when Pillow is missing
-        width, height = jpeg_dimensions(OUTPUT)
+    # Verify the output by sniffing its actual format, not its name:
+    # the no-Pillow fallback writes JPEG bytes to entry.png, so an
+    # extension-based check would try to parse it as PNG and fail.
+    width, height = output_dimensions(OUTPUT)
     if (width, height) != (EXPECTED_WIDTH, EXPECTED_HEIGHT):
         raise ValueError(
             f"output is {width}x{height}, "
