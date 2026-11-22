@@ -6,7 +6,7 @@
 
 One ingredient, one picture: **HONEY**. A single chunk of golden honeycomb fills the whole frame, thick amber honey dripping off its waxy hexagonal cells in glossy ribbons, a honey dipper resting against it, warm light on dark slate. Photoreal macro food photography — one look and you can taste it.
 
-`main.py` (Python 3.13, standard library only) validates the bundled photograph against the competition gate — whole JPEG, at most 1,048,576 bytes, at most 1024×1024 pixels — and writes it to `/output/entry.png`. The shipped image is 1024×1024 JPEG, 255,111 bytes.
+`main.py` (Python 3.13, standard library only) validates the bundled photograph against the competition gate — whole JPEG, at most 1,048,576 bytes, at most 1024×1024 pixels — and writes it to `/output/entry.png`. The shipped image is 1024×1024 JPEG, 231854 bytes.
 
 ## Run it
 
